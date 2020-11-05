@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  agent-timestamp-clustering:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stop_signal: SIGINT
+    volumes:
+      - ./src:/agent-timestamp-clustering/src:rw,consistent
+    ports:
+      - "5000:5000"
+    container_name: spia-agent-timestamp-clustering
+    env_file: .env
+
+volumes:
+  src:

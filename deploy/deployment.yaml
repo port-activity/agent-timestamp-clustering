@@ -1,0 +1,48 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: agent-timestamp-clustering
+spec:
+  selector:
+    app: agent-timestamp-clustering
+  type: NodePort
+  ports:
+    - protocol: TCP
+      name: agent-timestamp-clustering
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-timestamp-clustering
+  labels:
+    app: agent-timestamp-clustering
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent-timestamp-clustering
+  template:
+    metadata:
+      labels:
+        app: agent-timestamp-clustering
+    spec:
+      imagePullSecrets:
+      - name: pipeline-docker-registry
+      containers:
+      - name: agent-timestamp-clustering
+        image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}-${CICD_GIT_COMMIT}
+        env:
+          - name: API_TIMESTAMP_EXPORT_URL
+            valueFrom:
+              secretKeyRef:
+                name: agent-timestamp-clustering
+                key: API_TIMESTAMP_EXPORT_URL
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: agent-timestamp-clustering
+                key: API_KEY
+        ports:
+        - containerPort: 5000

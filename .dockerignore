@@ -1,0 +1,6 @@
+*
+!src/
+!.env
+!Pipfile
+!Pipfile.lock
+!README.md
